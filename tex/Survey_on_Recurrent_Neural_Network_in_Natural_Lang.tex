@@ -1,0 +1,118 @@
+\documentclass{jsarticle}
+\bibliographystyle{jplain}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{wrapfig}
+\usepackage{MnSymbol}
+\title{\vspace{-3cm}論文読みまとめ\\Survey on Recurrent Neural Network in Natural Lang}
+\author{井上智裕}
+\date{2020年11月18日}
+
+\makeatletter
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\@addtoreset{figure}{section}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\@addtoreset{table}{section}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+
+\begin{document}
+\maketitle
+\vspace{-1cm}
+\section{導入}
+\subsection{$\largestar$扱う問題}
+自然言語処理（NLP）
+\subsection{$\largestar$問題意識}
+自然言語処理分野では、テキストを単なる記号や単語の羅列のように扱うのではなく、
+複数の単語が一つのフレーズを作り、複数のフレーズが一つの文を作り、
+最終的には文が思考やアイデアを伝えるというような言語の階層構造を考慮する必要がある。
+従来のニューラルネットワークでは、すべての入力（および出力）は互いに独立していると考えるが、
+実際には、文中の次の単語を予測するタスクなど、前の入力を考慮する必要があるタスクが多い。
+
+\section{理論}
+RNNは、各ニューロンに内部メモリを持たせ前の入力の情報を保持することにより、文（単語列）のような
+連続的なデータ列を扱えるようにしている。
+図\ref{fig:fig1}にRNNが展開されている様子を示す。
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/RNN_1.PNG}
+    \caption{展開されたRNN}
+    \label{fig:fig1}
+  \end{center}
+\end{figure}
+
+$x_t$はステップ$t$における入力ベクトルであり、入力$x$は$t=1,\cdots,n$に対して$x=[x_1,\cdots,x_n]$である。
+例えば、$x=[{\rm its},{\rm water},{\rm is},{\rm so},{\rm transparent},{\rm STOP}]$のようになる。
+訓練データセット$D_{train}$は$D_{train}=\{x^1,\cdots,x^m\}$なる集合を考える。
+RNNでは、語彙の集合を$V\ (|V|=v)$、全ての実現しうる文を$V^{\max n}$として、$\forall x \in V^{\max n}$に対して、$P(x)$を返すモデルを考える。
+$P(x)$は(\ref{eq:eq2})式に示すように$x_1,\cdots,x_n$の同時確率で与えられる。
+これに同時確率の定義を適用すれば$(\ref{eq:eq3})式$が得られ、$P(x_2|x_1),\cdots,P(x_n|x_1)$は互いに独立であるので(\ref{eq:eq4})式が得られる。
+
+\begin{eqnarray}
+  \label{eq:eq2}
+  P(x) &=& P(x_1,\cdots,x_n) \\
+  \label{eq:eq3}
+  &=& P(x_1)P(x_2,\cdots,x_n|x_1) \\
+  \label{eq:eq4}
+  &=& P(x_1)P(x_2|x_1)\cdots P(x_n|x_1)
+\end{eqnarray}
+
+% また、単語$k$の重みを$w_k \in \mathbb{R}^{1 \times n-1}$、
+また、単語$k$の重みを$\theta_k$、単語の重みからなる行列を$\Theta$、
+$t=1$から$t=n-1$ステップまでの単語から抽出された特徴量を
+% $\phi(x_{n-1},\cdots,x_1)  \in \mathbb{R}^{n-1} $とする。
+$\phi(x_{n-1},\cdots,x_1)$とすると、ある文脈に対して次に現れる単語の確率は(\ref{eq:eq6})式により求められる。
+
+\begin{eqnarray}
+  \label{eq:eq5}
+  P(x_n = k|x_{n-1,\cdots,x_1}) &=& \frac{e^{\theta_k\cdot \phi(x_{n-1},\cdots,x_1)}}{\sum_{k'=1}^V e^{\theta_{k'}\cdot \phi(x_{n-1},\cdots,x_1)}} \\
+  \label{eq:eq6}
+  P(x_n|x_{n-1,\cdots,x_1}) &=& {\rm softmax}(\Theta\phi(x_{n-1},\cdots,x_1))
+\end{eqnarray}
+% $W=[w_1\ \cdots \ w_{n-1}]^T \in \mathbb{R}^{V \times n-1} $
+
+$s_t \in \mathbb{R}^{d}$はステップ$t$における隠れ状態であり、文脈情報を保持するネットワークのメモリに相当する。
+$s_t$は、入力$x_t$と前の隠れ状態$s_{t-1}$を用いて(\ref{eq:eq1})式により計算される。
+
+\begin{eqnarray}
+\label{eq:eq1}
+s_t = f(Ux_t + Ws_{t-1})
+\end{eqnarray}
+
+この関数$f$としては、$\tanh$やReLUのような非線形関数を用いる。
+また、$U \in \mathbb{R}^{d \times v} $は全単語ベクトルを含む行列であり、
+$W \in \mathbb{R}^{d \times d}$ はメモリがどのように渡されるかを制御する行列である。
+なお、初期の隠れ状態$s_{0}$は通常ゼロベクトルである。
+また、$o_t$はステップ$t$における出力である。
+単語列から次の単語を予測するタスクでは、各単語の出現確率を表すベクトルがこれに相当する。
+
+\begin{eqnarray}
+  \label{eq:eq7}
+  o_t &=& {\rm softmax}(Vs_t)
+\end{eqnarray}
+
+$V \in \mathbb{R}^{v \times d}$は文脈情報を単語の確率分布に変換する行列である。
+以上より、$t = 1,\cdots,n-1$について、 (\ref{eq:eq1})式を順に計算することで$s_{n-1}$を求めることができ、
+(\ref{eq:eq8})式によって、$t=n-1$までの文脈に対して$t=n$に現れる単語の確率分布を求めることができる。
+
+\begin{eqnarray}
+  \label{eq:eq8}
+  P(x_n|x_{n-1,\cdots,x_1}) &=& o_{n-1} = {\rm softmax}(Vs_{n-1}) 
+\end{eqnarray}
+
+RNNでは、単語ベクトルから作られる行列$U$、隠れ層および出力層のパラメタ$W$、$V$を学習する必要がある。
+通常の誤差逆伝播法はRNNの再帰性のため機能しないため、Backpropagation Through Time（BPTT）を利用する。
+
+なお、RNNは数ステップしか情報を保持できないという欠点があるが、
+Long Short Term Memory (LSTM)をネットワークに追加することでこれを改善できる。
+
+\section{結論・展望}
+RNNは内部メモリを持たせることで文脈情報を保持して、連続的なデータ列を扱うことができるため、
+近年非常に人気のある手法であり、多方面で利用されている。
+
+\end{document}
