@@ -1,0 +1,237 @@
+\documentclass{jsarticle}
+\bibliographystyle{jplain}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{wrapfig}
+\usepackage{MnSymbol}
+\usepackage{scalefnt}
+\usepackage{here}
+\title{\vspace{-3cm}論文読みまとめ\\Effective Approaches to Attention-based Neural Machine Translation
+}
+\author{井上智裕}
+\date{2020年12月22日}
+
+\makeatletter
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\@addtoreset{figure}{section}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\@addtoreset{table}{section}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+
+\begin{document}
+\maketitle
+\vspace{-1cm}
+\section{導入}
+\subsection{扱う問題}
+英語-ドイツ語の双方向の翻訳タスク
+
+\subsection{問題意識}
+どこに問題意識を感じているのか？既存手法では何が足りないのか？
+
+従来よりニューラル機械翻訳（NMT）という手法が使われてきた。 
+NMTとは、原文$x_1, . . . , x_n$を$ y_1, . . . , y_m$に翻訳する際の条件付き確率を$p(y|x)$直接モデル化したニューラルネットワークのことである。
+NMTは各原文の表現$s$を計算するエンコーダと、一度に1つの対象語を生成し、
+次のように条件付確率$p(y|x)$を分解するデコーダからなる。
+
+\begin{eqnarray}
+  \log p(y|x) = \sum_{j=1}^m \log p(y_j|y_{<j},s)
+\end{eqnarray}
+
+すなわち、原文の表現$s$とそれまでに生成された途中までの系列が得られたときの、
+ある系列が得られる条件付確率の積に分解する。
+この分解は原文の表現$s$と生成された系列から確率を計算するタスクなので、RNNアーキテクチャが用いられる。
+デコーダにはRNN、LSTM、GRUなどが用いられ、エンコーダにはCNN、LSTM、GRUなどが用いられる。
+なお、従来手法の多くでは原文の表現$s$はデコーダの隠れ状態の初期化のために一度だけ使用される。
+系列変換モデルでは系列情報をRNNベースの手法で固定長のベクトルに変換するが、
+LSTMなどを用いても短い系列に比べ長い系列の方がネットワーク内の情報伝播が難しくなるという問題がある。
+そこで、入力情報を出力時により直接的に利用する注意機構が用いられるようになった。
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/02_Attention/fig1.PNG}
+    \caption{NMT}
+    \label{fig:fig1}
+  \end{center}
+\end{figure}
+
+また、本研究以前の注意機構には、ソフト注意機構やハード注意機構があった。
+ソフト注意機構は、加重平均の対象が入力系列全体となるため、長い系列ほど
+計算コストが高くなるというデメリットがある。
+一方、ハード注意機構は微分できない過程を含むため、最適化が難しくなるという課題がある。
+本研究では、これらのデメリットに対処する方法として局所注意機構を提案している。
+
+
+\section{理論}
+どのようなアイデア・ロジック・仮定で問題を解決しようとしているか？なぜそれで問題が解決できるのか？
+\subsection{Attention-based models}
+アイデアをどのように定式に落とし込んでいるか？それぞれの式は何を意味しているのか？
+
+本研究のAttention-based modelsはGlobalとLocalの2種類に大別される。
+2種類のモデルに共通しているのは、Attentoin layerにおいて
+デコーダの各ステップ$t$においてデコーダの
+LSTMの最上層の隠れ状態$h_t$を入力としていることと、
+入力系列の情報を捉えるコンテクストべクトル$c_t$を出力することである。
+ただし、コンテクストべクトル$c_t$の計算方法が2つのモデルで異なっている。
+Attention layerで得られたコンテクストべクトル$c_t$と隠れ状態$h_t$の情報は
+統合されて、以下のように隠れ状態$\tilde h_t$を生成する。
+
+\begin{eqnarray}
+  \tilde h_t = \tanh(W_c[c_t;h_t])
+\end{eqnarray}
+
+この$\tilde h_t$を用いて、予測される単語の確率分布は次で表される。
+
+\begin{equation}
+p(y_t|y_{<t},x) = softmax(W_s\tilde h_t)  
+\end{equation}
+
+\subsection{Global Attention}
+Global attentional modelでは、コンテクストべクトル$c_t$の計算時に
+エンコーダのすべての隠れ状態が考慮される。
+このモデルではエンコーダの時間ステップ数に等しいサイズの
+可変長アライメントベクトル$a_t$が、
+着目するデコーダのステップ$t$の隠れ状態$h_t$と
+エンコーダの各ソースの隠れ状態$\bar h_s$を比較することによって導出される。
+
+\begin{eqnarray}
+  a_t(s) &=& align(h_t,\bar h_s) \\
+  &=& \frac{\exp(score(h_t,\bar h_s))}{\sum_{s'}\exp(score(h_t,\bar h_{s'}))}
+\end{eqnarray}
+
+また、score関数は3種類提案されている。
+
+\begin{eqnarray}
+  score(h_t,\bar h_s) = \begin{cases}
+    h_t^T\bar h_s & dot \\
+    h_t^TW_a\bar h_s & general \\
+    v_a^T \tanh(W_a [h_t;\bar h_s]) & concat \\
+  \end{cases}
+\end{eqnarray}
+
+こうして得られたアライメントベクトル$a_t$を重みとして、
+入力系列全体の加重平均としてコンテクストベクトル$c_t$が与えられる。
+
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/02_Attention/fig2.PNG}
+    \caption{Global attentional model}
+    \label{fig:fig2}
+  \end{center}
+\end{figure}
+
+
+\subsection{Local Attention}
+Global attentional model（ソフト注意機構）には、各ターゲット単語に対して、
+入力系列全体を見る必要があるため、コストがかかり、
+段落や文書といった長い系列に対して不利であるというデメリットがある。
+このデメリットを解決する従来手法として
+ハード注意機構がある。
+ソフト注意機構がアライメントベクトル$a_t$を重みとして、
+入力系列全体の加重平均を計算していたのに対して、
+ハード注意機構ではアライメントベクトルの最も大きい成分に対応する
+入力系列のステップの隠れ状態をそのままコンテクストベクトル$c_t$として利用する。
+ハード注意機構は、推論時間が短くなる反面、微分できず、
+学習のためにより複雑な手法を必要とするデメリットがある。
+
+これらの手法の改善策として、Local attentional model（局所注意機構）では、
+各ターゲット単語ごとに入力系列の一部に焦点を当てる。
+これにより、ソフト注意機構に比べ計算コストが低く、微分可能であるため、
+ハード注意機構に比べ学習が容易である。
+このモデルではまずデコーダのステップtにおいて、アライメント位置$p_t$を
+生成する。コンテクストベクトル$c_t$は入力系列に対して
+窓枠$[p_t-D,p_t+D]$内の隠れ状態の集合に対する加重平均として導出される。
+この$p_t$の生成には、2つのバリエーションがある。
+1つ目は入力系列とターゲット系列がほぼ単調にアラインメントされていると仮定して
+$p_t=t$とする方法である。
+2つ目は以下の式を用いて、位置を予測する方法である。
+
+\begin{eqnarray}
+  p_t = S\cdot sigmoid (v_p^T \tanh(W_p h_t))
+\end{eqnarray}
+
+また、$a_t$を以下の式で計算する。
+
+\begin{eqnarray}
+  a_t(s) = align(h_t,\bar h_s)\exp(-\frac{(s-p_t)^2}{2\sigma^2})
+\end{eqnarray}
+
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/02_Attention/fig3.PNG}
+    \caption{Local attentional model}
+    \label{fig:fig3}
+  \end{center}
+\end{figure}
+
+\section{実験}
+どんな実験設定か？どんな点で他の手法より良くなったか？
+
+4.5Mの文対（116Mの英単語、110Mのドイツ語の単語）からなるWMT'14のtrainデータを
+学習に使用した。
+語彙は両言語でもっとも頻繁に使用される単語の上位50Kで、これに含まれない単語は
+ユニバーサルトークンに置き換えられる。
+我々のNMTシステムを訓練するとき、
+長さが50単語を超える文のペアをフィルタリングし、
+我々が進むにつれてミニバッチをシャッフルする。
+使用したLSTMモデルは、4つの層を持ち、
+それぞれが1000個のセルを持ち、1000次元の埋め込みを持つ。
+パラメータは一様に$[-0.1, 0.1]$で初期化し、
+最適化にはSGDを使用して10エポック学習させた。
+学習率は1で開始し、5エポック以降はエポックごとに学習率を半分にした。
+ミニバッチサイズは128で、正規化された勾配は、
+そのノルムが5を超えるたびにスケーリングし直した。
+さらに、LSTMに確率0.2のドロップアウトを使用した。
+ドロップアウトモデルについては、12エポック学習させ、
+8エポック後に学習率を半減させた。
+局所注意機構については、経験的に窓の大きさをD = 10とした。
+様々な設定の8つの異なるモデルによるアンサンブル学習に未知語の置換を
+組み合わせたところ、英独翻訳タスクにおいてWMT’14、WMT’15のいずれでも
+既存手法より高い性能を示した。
+独英翻訳タスクではSOTAには及ばなかったものの注意機構の導入により改善が確認された。
+
+\section{結論・展望}
+他に改善するとしたらどこか？
+本論文では、NMTのための2つのシンプルで効果的な注意機構が提案された。
+すなわち、常に原文全体に注目するグローバルアプローチと、
+一度に原文のサブセットのみに注目するローカルアプローチである。
+英語とドイツ語の両方向のWMT翻訳タスクで我々のモデルの有効性をテストしています。
+局所的注意機構は、ドロップアウトのような既知の技術をすでに組み込んでいる非注意モデル
+と比較して、最大5.0BLEUの大きな改善をもたらした。
+英語からドイツ語への翻訳については、本研究のアンサンブルモデルは、
+WMT'14とWMT'15の両方で、
+既存のベストシステムを1.0 BLEU以上も上回る、新たな最先端の結果を確立した。
+一方でドイツ語から英語への翻訳では有効性は見られたが、
+SOTAには及ばなかった。
+
+%% \begin{table}[htbp]
+%%   \begin{center}
+%%     \caption{何かの表}
+%%     \begin{tabular}{|c|c|c|c|c|} \hline
+%%       ユーザー & 映画1 & 映画2 & 映画3 & 映画4 \\ \hline 
+%%       A & 5 & 3 &   &  \\
+%%       B &  & 2 &  & 5 \\
+%%       C &  &  & 4 & 3 \\ 
+%%       D & 4 &  & 3 & \\
+%%       E & 4 & 3 &  & 2\\ \hline
+%%     \end{tabular}
+%%     \label{tab:tab1}
+%%   \end{center}
+%% \end{table}
+
+%% \begin{figure}[htbp]
+%%   \begin{center}
+%%     \includegraphics[clip,width=12.0cm]{/path/to/hoge.png}
+%%     \caption{何かの図}
+%%     \label{fig:fig1}
+%%   \end{center}
+%% \end{figure}
+
+
+\end{document}
