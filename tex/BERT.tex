@@ -1,0 +1,76 @@
+\documentclass{jsarticle}
+\bibliographystyle{jplain}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{wrapfig}
+\usepackage{MnSymbol}
+\usepackage{scalefnt}
+\usepackage{here}
+\title{\vspace{-3cm}論文読みまとめ\\論文タイトル}
+\author{井上智裕}
+\date{2021年1月4日}
+
+\makeatletter
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\@addtoreset{figure}{section}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\@addtoreset{table}{section}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+
+\begin{document}
+\maketitle
+\vspace{-1cm}
+\section{導入}
+\subsection{扱う問題}
+画像処理か？音声認識か？
+\subsection{問題意識}
+どこに問題意識を感じているのか？既存手法では何が足りないのか？
+
+\section{理論}
+どのようなアイデア・ロジック・仮定で問題を解決しようとしているか？なぜそれで問題が解決できるのか？
+\subsection{定式化・アルゴリズム}
+アイデアをどのように定式に落とし込んでいるか？それぞれの式は何を意味しているのか？
+
+\section{実験}
+どんな実験設定か？どんな点で他の手法より良くなったか？
+
+\section{結論・展望}
+他に改善するとしたらどこか？
+
+%% \begin{table}[htbp]
+%%   \begin{center}
+%%     \caption{何かの表}
+%%     \begin{tabular}{|c|c|c|c|c|} \hline
+%%       ユーザー & 映画1 & 映画2 & 映画3 & 映画4 \\ \hline 
+%%       A & 5 & 3 &   &  \\
+%%       B &  & 2 &  & 5 \\
+%%       C &  &  & 4 & 3 \\ 
+%%       D & 4 &  & 3 & \\
+%%       E & 4 & 3 &  & 2\\ \hline
+%%     \end{tabular}
+%%     \label{tab:tab1}
+%%   \end{center}
+%% \end{table}
+
+%% \begin{figure}[htbp]
+%%   \begin{center}
+%%     \includegraphics[clip,width=12.0cm]{/path/to/hoge.png}
+%%     \caption{何かの図}
+%%     \label{fig:fig1}
+%%   \end{center}
+%% \end{figure}
+
+% \begin{eqnarray}
+%   score(h_t,\bar h_s) = \begin{cases}
+%     h_t^T\bar h_s & dot \\
+%     h_t^TW_a\bar h_s & general \\
+%     v_a^T \tanh(W_a [h_t;\bar h_s]) & concat \\
+%   \end{cases}
+% \end{eqnarray}
+
+\end{document}
