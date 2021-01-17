@@ -15,3 +15,4 @@
 1. [Language Through a Prism: A Spectral Approach for Multiscale Language Representations](https://proceedings.neurips.cc/paper/2020/file/3acb2a202ae4bea8840224e6fce16fd0-Paper.pdf)
 1. [Language Models are Unsupervised Multitask Learners(GPT-2)](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
+1. [Meta-learning for Few-shot Natural Language Processing: A Survey](https://arxiv.org/abs/2007.09604)
