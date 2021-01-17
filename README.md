@@ -17,3 +17,4 @@
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
 1. [Meta-learning for Few-shot Natural Language Processing: A Survey](https://arxiv.org/abs/2007.09604)
 1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
+1. [A Primer in BERTology: What we know about how BERT works](https://arxiv.org/abs/2002.12327)
