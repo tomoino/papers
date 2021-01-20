@@ -1,0 +1,273 @@
+\documentclass{jsarticle}
+\bibliographystyle{junsrt}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{wrapfig}
+\usepackage{MnSymbol}
+\usepackage{scalefnt}
+\usepackage{here}
+\title{\vspace{-3cm}論文読みまとめ
+\\Meta-learning for Few-shot Natural Language Processing: A Survey}
+\author{井上智裕}
+% \date{2021年1月19日}
+
+\makeatletter
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\@addtoreset{figure}{section}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\@addtoreset{table}{section}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+
+\begin{document}
+\maketitle
+\vspace{-1cm}
+\section{導入}
+\subsection{扱う問題}
+メタ学習、Few-shot natural language processing 
+
+\subsection{問題意識}
+% どこに問題意識を感じているのか？既存手法では何が足りないのか？
+% Few-shot natural language processing (NLP) とは、
+% 学習に用いるサンプルデータサイズが小さいNLPタスクのことをいう。
+今回対象とする問題は、サンプルデータサイズが小さいタスクである。
+こういったタスクは1クラスあたりのデータ数を$k$として $k$-shot learning 
+(one-shot learning, few-shot learning など) と呼ばれる。
+% 自然言語処理分野では、このようなタスクを特にFew-shot NLPという。
+従来のニューラルネット（NN）は、ラベル付けされたデータセットに対し、
+反復学習を行うことで学習を行う。
+% モデルの精度を向上させるために、より多くのデータセットを利用したり、
+% より効率的な学習モデルを開発したりする。
+NN でモデルの精度を向上させるためには
+モデルのサイズを大きくしたり、多数のデータセットを時間をかけて学習させたりすることが
+有効である。
+しかし、データの少ないタスクではこの方法を取ることはできない。
+そこで、データの少ないタスクを迅速に学習できる効率的な
+アルゴリズムの構築を目的とする方法として
+メタ学習を紹介する。
+
+% どのようなアイデア・ロジック・仮定で問題を解決しようとしているか？なぜそれで問題が解決できるのか？
+\section{メタ学習}
+% アイデアをどのように定式に落とし込んでいるか？それぞれの式は何を意味しているのか？
+% メタ学習の目的は前述のようにデータの少ないタスクを迅速に学習できる効率的な
+% アルゴリズムの構築である。
+\subsection{メタ学習とは}
+メタ学習とは、学習方法を学習するためのアルゴリズムである。
+ニューラルネット（NN）では、ある特定のタスクにおいて、
+ラベル付けされた入力例を用いて学習を行う。
+図\ref{fig:fig2}\cite{meta-thomas}にNNの学習プロセスを示す。
+まず、入力例に対するモデルの予測ラベルと正解ラベルから loss 関数により loss を計算する。
+次に、この loss が小さくなるように optimizer を用いてネットワークのパラメタを調整する。
+% この過程を繰り返すことにより、タスク固有のモデルを学習する。
+このように、NN では train サンプルと test サンプルが同じ分布に由来するものであるという
+仮定のもと、trainサンプルを用いて、test サンプルにも対応できるように
+ネットワークのパラメタを学習する。
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/05_meta/fig2.png}
+    \caption{NNの学習プロセス\cite{meta-thomas}}
+    \label{fig:fig2}
+  \end{center}
+\end{figure}
+
+一方、メタ学習では、特定のタスクを解決の対象とするのではなく、
+タスクの集合に対して、タスク1つを学習サンプル1つとして扱い、
+学習プロセス全体を学習する。
+図\ref{fig:fig4}\cite{meta-thomas}にメタ学習の学習プロセスを示す。
+まず、あるタスク$T_i$のデータセットに対して、
+通常のNN同様に学習を行う。
+学習されたモデルのタスク$T_i$における test loss が meta lossとして機能する。
+次に、この meta loss が小さくなるように meta optimizer により meta parameter の学習が行われる。
+ meta parameter としては、NN の初期パラメタや optimizer のパラメタが用いられる。
+このように、メタ学習では train タスクと test タスクが同じ分布に由来するものであるという仮定のもと、
+ train タスクを用いて、test タスクを効率よく学習できるように
+ meta parameter を学習する。
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/05_meta/fig4.PNG}
+    \caption{メタ学習の学習プロセス\cite{meta-thomas}}
+    \label{fig:fig4}
+  \end{center}
+\end{figure}
+
+\subsection{メタ学習と転移学習の比較}
+転移学習は、事前にあるタスクAのデータセットを用いてネットワークのパラメタを事前学習させておき、
+ターゲットタスクであるタスクBのデータセットで追加の学習を行ってモデルの調整を行うという逐次的な
+学習手法である。
+転移学習はタスクAの学習により同じ問題領域にあるタスクBに対応できるという学習方法であるのに対して、
+メタ学習は効率の良い学習方法を学習することができるので適応できるタスクはさらに広い。
+人間の学習方法に例えると、転移学習は数学を学ぶと理科の成績が良くなることに似ていて、
+メタ学習は勉強の際にいつの演習まで復習するかといった方法論自体を学ぶことで全く異なる
+領域の勉強にも応用が利くことに似ている。
+
+\subsection{メタ学習とマルチタスク学習の比較}
+マルチタスク学習は、複数のタスクに対応できる単一のモデルを構築する手法のことで、
+関連する複数のタスクを同時に学習させることで実現する。
+複数のタスクに依存する点でメタ学習はマルチタスク学習の一種であるといえるが、
+これらには異なる点が存在する。
+まず、マルチタスク学習はターゲットタスクに対する汎化性能の高い
+事前学習モデルを学習することが目的である。
+一方で、メタ学習はターゲットタスクを素早く学習する効率的な学習アルゴリズムを
+学習しようとすることが目的である。
+また、マルチタスク学習では、データ数の多いタスクほど有利になるためデータ数が主な関心となるのに対して、
+メタ学習では、学習タスクの数が多いほど有利になるため学習タスク数が主な関心となる。
+
+% Hard parameter sharing：すべてのタスクで隠れ層をシェアする
+
+\section{メタ学習の歴史}
+\subsection{埋め込みの学習：metric-based meta-learning}
+metric learning はデータ間の距離関数を学習する手法のことである。
+直感的には
+意味の近いデータは近く、意味の遠いデータは遠くなるように計量を学習する\cite{MetricLe5:online}。
+距離関数はインスタンスを表現空間に埋め込む関数と空間内での類似度を計算する関数
+（余弦類似度やユークリッド距離）からなる。
+距離関数が学習タスクで十分に学習されていれば、
+目標タスクでは fine-tuning なしで十分に機能する頑健性の高い手法である。
+
+\subsubsection{マハラノビス距離学習}
+% 古典的な metric learning
+古典的な metric learning の手法\cite{MetricLe5:online}。
+式\ref{mahara}の共分散行列$M$を学習する。
+\begin{eqnarray}
+  \label{mahara}
+  d_M(x,y) = \sqrt{(x-y)^TM(x-y)}
+\end{eqnarray}
+$M$が半正定値行列であればマハラノビス距離は以下のように変形できる。
+% 半正定値行列：ベクトルaに対して、a^T M a が正。ある実正方行列 U を用いて M = U^T U と表せる。
+\begin{eqnarray}
+  \label{mahara2}
+  d_M(x,y) 
+  &=& \sqrt{(x-y)^TM(x-y)} \nonumber\\
+  &=& \sqrt{(x-y)^TL^TL(x-y)} \nonumber\\
+  &=& \sqrt{\{L(x-y)\}^TL(x-y)} \nonumber\\
+  &=& \|Lx-Ly\|_2
+\end{eqnarray}
+これは、$x$、$y$を実正方行列$L$により表現空間に埋め込み、
+そこでのユークリッド距離を取っていると見なすことができる。
+なお、$M$ は非類似サンプルの組の集合$D$と類似サンプルの組の集合$S$に対して、
+以下の制約付き最適化問題を解けばよい。
+\begin{eqnarray}
+  \label{mahara3}
+  M = \argmax_M \sum_{(x_i,x_j)\in D} d_M(x_i, x_j) \nonumber\\
+  {\rm subject\ to }   \sum_{(x_i,x_j)\in S} d^2_M(x_i, x_j) \le 1,\ M \ge 0
+\end{eqnarray}
+
+
+\subsubsection{Siamese Network}
+% deep metric learning
+Siamese Networkは、2006年ごろに提案された手法である。
+その概要を図\ref{fig:fig5}に示す。
+Siamese Networkは、2つのインスタンスを入力として受け取り、
+同じクラスに属す場合は1、そうでない場合は0を出力する。
+埋め込み関数$f$には deep learning を用いることができ、
+こうした deep learning を導入した metric learning を deep metric learning という。
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=12.0cm]{image/05_meta/fig5.png}
+    \caption{Siamese Network の概要\cite{MetricLe5:online}}
+    \label{fig:fig5}
+  \end{center}
+\end{figure}
+
+
+\subsubsection{Matching Network}
+Matching Network は、
+2016年に提案されたone-shot分類問題に対する最初の metric-based なメタ学習アルゴリズムである。
+Matching Network は、パラメトリックな最近傍探索アルゴリズムが基本となっており、
+式\ref{MN}で定義される。
+
+\begin{eqnarray}
+  \label{MN}
+  P(\hat y | \hat x, S) = \sum_{i=1}^k a(\hat x, x_i)y_i 
+\end{eqnarray}
+
+$S$ は各クラス1サンプルずつサイズ $k$ のラベル付きデータセットである。
+また、$a$ は NN により得られる $\hat x, x_i$ の表現に対して余弦類似度を計算する関数である。
+Siamese Network が本質的には埋め込み空間における距離関数であったのに対して、
+Matching Network は埋め込み空間内におけるデータセット $S$ を用いた
+最近傍分類器と見なすことができる。
+Matching Network では、表現の埋め込みがデータセット $S$ 全体の影響を受けているという
+特徴がある。
+
+\subsubsection{Prototypical Network}
+Prototypical Network は、2017年に提案されたfew-shot分類問題に対する手法で
+Matching Network と比較して、
+2つの新しい点がある。
+1つ目に、類似度計算にユークリッド距離を用いることである。
+2つ目に、データセットの各サンプルの埋め込み表現に対する距離を利用するのではなく、
+図\ref{fig:fig6}に示すようにクラスごとの埋め込み表現の平均をプロトタイプ$c_k$として
+プロトタイプ$c_k$との距離を利用することである。
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[clip,width=8.0cm]{image/05_meta/fig6.PNG}
+    \caption{Prototypical Networkの距離計算\cite{snell2017prototypical}}
+    \label{fig:fig6}
+  \end{center}
+\end{figure}
+
+\subsubsection{Relation Network}
+Relation Network は、2018年に提案された手法であり、metric を次式で定義する。
+\begin{eqnarray}
+  \label{RN}
+  r_{i,j} = s(e(x_i),e(x_j))
+\end{eqnarray}
+ここで、関数 $e$ は入力インスタンスの表現ベクトルを生成する埋め込み関数である。
+また、$s$ は類似度を計算する関数であり、Prototypical Network とは異なり、DNNである。
+本質的にここまであげた metric learning は事前学習された最近傍探索アルゴリズムである。
+
+% プロトタイプネットワークは、数ショットの場合はマッチングネットワークと異なり、
+% ワンショットの場合は等価である。
+% また、この文献では、サポートセットを意識した表現学習は不要であると主張している。
+% \section{結論・展望}
+% 他に改善するとしたらどこか？
+
+%% \begin{table}[htbp]
+%%   \begin{center}
+%%     \caption{何かの表}
+%%     \begin{tabular}{|c|c|c|c|c|} \hline
+%%       ユーザー & 映画1 & 映画2 & 映画3 & 映画4 \\ \hline 
+%%       A & 5 & 3 &   &  \\
+%%       B &  & 2 &  & 5 \\
+%%       C &  &  & 4 & 3 \\ 
+%%       D & 4 &  & 3 & \\
+%%       E & 4 & 3 &  & 2\\ \hline
+%%     \end{tabular}
+%%     \label{tab:tab1}
+%%   \end{center}
+%% \end{table}
+
+%% \begin{figure}[htbp]
+%%   \begin{center}
+%%     \includegraphics[clip,width=12.0cm]{/path/to/hoge.png}
+%%     \caption{何かの図}
+%%     \label{fig:fig1}
+%%   \end{center}
+%% \end{figure}
+
+% \begin{figure}[H]
+%   \begin{center}
+%     \includegraphics[clip,width=12.0cm]{image/02_Attention/fig1.PNG}
+%     \caption{NMT}
+%     \label{fig:fig1}
+%   \end{center}
+% \end{figure}
+
+% \begin{eqnarray}
+%   score(h_t,\bar h_s) = \begin{cases}
+%     h_t^T\bar h_s & dot \\
+%     h_t^TW_a\bar h_s & general \\
+%     v_a^T \tanh(W_a [h_t;\bar h_s]) & concat \\
+%   \end{cases}
+% \end{eqnarray}
+
+\bibliography{ref}
+
+\end{document}
