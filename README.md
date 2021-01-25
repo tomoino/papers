@@ -10,11 +10,11 @@
 
 # 読もうと思っているもの
 1. [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [Order-Embeddings of Images and Language](https://arxiv.org/abs/1511.06361)
 1. [Unifying Visual-Semantic Embeddings with Multimodal Neural Language Models](https://arxiv.org/abs/1411.2539)
-1. [Unsupervised Multilingual Word Embeddings](https://arxiv.org/pdf/1808.08933.pdf)
-1. [Massively Multilingual Word Embeddings](https://arxiv.org/pdf/1602.01925.pdf)
 1. [Language Models are Unsupervised Multitask Learners(GPT-2)](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
-1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [A Primer in BERTology: What we know about how BERT works](https://arxiv.org/abs/2002.12327)
+1. [Unsupervised Multilingual Word Embeddings](https://arxiv.org/pdf/1808.08933.pdf)
+1. [Massively Multilingual Word Embeddings](https://arxiv.org/pdf/1602.01925.pdf)
