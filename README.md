@@ -7,6 +7,7 @@
 1. [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)
 1. [Language Through a Prism: A Spectral Approach for Multiscale Language Representations](https://proceedings.neurips.cc/paper/2020/file/3acb2a202ae4bea8840224e6fce16fd0-Paper.pdf)
 1. [Meta-learning for Few-shot Natural Language Processing: A Survey](https://arxiv.org/abs/2007.09604)
+1. [Generalizing from a Few Examples: A Survey on Few-Shot Learning](https://arxiv.org/abs/1904.05046)
 
 # 読もうと思っているもの
 1. [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
