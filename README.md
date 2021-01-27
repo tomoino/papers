@@ -19,3 +19,4 @@
 1. [A Primer in BERTology: What we know about how BERT works](https://arxiv.org/abs/2002.12327)
 1. [Unsupervised Multilingual Word Embeddings](https://arxiv.org/pdf/1808.08933.pdf)
 1. [Massively Multilingual Word Embeddings](https://arxiv.org/pdf/1602.01925.pdf)
+1. [Reinforcement Learning: A Survey](https://www.jair.org/index.php/jair/article/view/10166)
