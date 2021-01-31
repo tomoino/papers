@@ -17,6 +17,4 @@
 1. [Language Models are Unsupervised Multitask Learners(GPT-2)](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
 1. [A Primer in BERTology: What we know about how BERT works](https://arxiv.org/abs/2002.12327)
-1. [Unsupervised Multilingual Word Embeddings](https://arxiv.org/pdf/1808.08933.pdf)
-1. [Massively Multilingual Word Embeddings](https://arxiv.org/pdf/1602.01925.pdf)
 1. [Reinforcement Learning: A Survey](https://www.jair.org/index.php/jair/article/view/10166)
