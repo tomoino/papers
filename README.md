@@ -18,3 +18,4 @@
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
 1. [A Primer in BERTology: What we know about how BERT works](https://arxiv.org/abs/2002.12327)
 1. [Reinforcement Learning: A Survey](https://www.jair.org/index.php/jair/article/view/10166)
+1. [Improving Language Understanding by Generative Pre-Training(GPT-1)](https://www.cs.ubc.ca/~amuham01/LING530/papers/radford2018improving.pdf)
