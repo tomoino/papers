@@ -9,9 +9,9 @@
 1. [Meta-learning for Few-shot Natural Language Processing: A Survey](https://arxiv.org/abs/2007.09604)
 1. [Generalizing from a Few Examples: A Survey on Few-Shot Learning](https://arxiv.org/abs/1904.05046)
 1. [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+1. [Language Models are Unsupervised Multitask Learners(GPT-2)](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 
 # 読もうと思っているもの
-1. [Language Models are Unsupervised Multitask Learners(GPT-2)](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [Order-Embeddings of Images and Language](https://arxiv.org/abs/1511.06361)
 1. [Unifying Visual-Semantic Embeddings with Multimodal Neural Language Models](https://arxiv.org/abs/1411.2539)
