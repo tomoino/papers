@@ -11,10 +11,10 @@
 1. [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 1. [Language Models are Unsupervised Multitask Learners(GPT-2)](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 1. [Improving Language Understanding by Generative Pre-Training(GPT-1)](https://www.cs.ubc.ca/~amuham01/LING530/papers/radford2018improving.pdf)
+1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [FewRel: A Large-Scale Supervised Few-Shot Relation Classification Dataset with State-of-the-Art Evaluation](https://www.aclweb.org/anthology/D18-1514/)
 
 # 読もうと思っているもの
-1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [Order-Embeddings of Images and Language](https://arxiv.org/abs/1511.06361)
 1. [Unifying Visual-Semantic Embeddings with Multimodal Neural Language Models](https://arxiv.org/abs/1411.2539)
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
