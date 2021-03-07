@@ -13,11 +13,11 @@
 1. [Improving Language Understanding by Generative Pre-Training(GPT-1)](https://www.cs.ubc.ca/~amuham01/LING530/papers/radford2018improving.pdf)
 1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [FewRel: A Large-Scale Supervised Few-Shot Relation Classification Dataset with State-of-the-Art Evaluation](https://www.aclweb.org/anthology/D18-1514/)
-
+1. [Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks (MAML)](https://arxiv.org/abs/1703.03400)
+2. 
 # 読もうと思っているもの
 1. [Order-Embeddings of Images and Language](https://arxiv.org/abs/1511.06361)
 1. [Unifying Visual-Semantic Embeddings with Multimodal Neural Language Models](https://arxiv.org/abs/1411.2539)
 1. [Deep Contextualized Word Representations (ELMo)](https://www.aclweb.org/anthology/N18-1202/)
 1. [A Primer in BERTology: What we know about how BERT works](https://arxiv.org/abs/2002.12327)
 1. [Reinforcement Learning: A Survey](https://www.jair.org/index.php/jair/article/view/10166)
-1. [Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks (MAML)](https://arxiv.org/abs/1703.03400)
