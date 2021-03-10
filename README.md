@@ -14,7 +14,7 @@
 1. [Language Models are Few-Shot Learners (GPT-3)](https://arxiv.org/abs/2005.14165)
 1. [FewRel: A Large-Scale Supervised Few-Shot Relation Classification Dataset with State-of-the-Art Evaluation](https://www.aclweb.org/anthology/D18-1514/)
 1. [Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks (MAML)](https://arxiv.org/abs/1703.03400)
-2. 
+
 # 読もうと思っているもの
 1. [Order-Embeddings of Images and Language](https://arxiv.org/abs/1511.06361)
 1. [Unifying Visual-Semantic Embeddings with Multimodal Neural Language Models](https://arxiv.org/abs/1411.2539)
